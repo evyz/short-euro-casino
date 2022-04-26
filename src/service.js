@@ -1,13 +1,7 @@
-const positions = []
-
-const red = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36]
+const { red } = require('./state')
 
 function getRandomInt(max) {
   return Math.floor(Math.random() * max);
-}
-
-function getRandomArbitrary(min, max) {
-  return Math.random() * (max - min) + min;
 }
 
 function bid(bet, money, result) {
@@ -61,7 +55,6 @@ function bid(bet, money, result) {
         }
         break
     }
-
   }
 
   if (bet >= 0 && bet <= 36) {
@@ -96,5 +89,6 @@ function bid(bet, money, result) {
 
 
 module.exports = {
-  bid
+  bid,
+  getRandomInt
 }
