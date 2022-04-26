@@ -1,27 +1,15 @@
 const dayJs = require('dayjs')
-const { bid, getRandomInt } = require('./service')
+const { getRandomInt } = require('./service')
+const bets = require('./bets')
 const states = require('./state')
 
 module.exports = {
   generateNum:
-    setInterval(() => {
+    setInterval(async () => {
       states.number = getRandomInt(36)
-
-      states.currentBet.forEach(cur => {
-        let resultBet = bid(cur.bet, cur.money, states.number)
-        states.users.forEach(user => {
-          if (user.name === cur.name) {
-            if (resultBet.finalMoney !== 0) {
-              user.balance = user.balance + resultBet.finalMoney
-              cur.money = resultBet.finalMoney
-            } else {
-              cur.money = 0
-            }
-          }
-        })
-      })
+      await bets.calculateBets()
     }, 25000),
-  timer: setInterval(() => {
+  timer: setInterval(async () => {
     states.check = dayJs(new Date()).diff(states.date)
     if (states.check < 16000) {
       states.stavka = true
@@ -37,7 +25,7 @@ module.exports = {
       states.balance = true
     }
     if (states.check > 29000 && states.check < 33000) {
-      states.currentBet = []
+      await bets.dropBets()
       states.number = null
     }
     if (states.check > 33000 && states.check < 34000) {
@@ -48,7 +36,7 @@ module.exports = {
       states.date = dayJs(new Date())
     }
   }, 1000),
-  renderMessages: (ws, aWs) => setInterval(() => {
+  renderMessages: (ws, aWs) => setInterval(async () => {
     if (states.isSend) {
       aWs.clients.forEach(client => {
         client.send(JSON.stringify({ result: states.number }))
@@ -62,21 +50,22 @@ module.exports = {
       states.krutilka = false
     }
     if (states.balance) {
-      states.currentBet.forEach(cur => {
-        if (cur.name === ws.name) {
-          if (cur.money === 0) {
-            ws.send(JSON.stringify({ text: "Проигрыш", money: cur.money }))
-          }
-          else {
-            ws.send(JSON.stringify({ text: "Победа", money: cur.money }))
-          }
-          states.users.forEach(user => {
-            if (user.name === cur.name) {
-              ws.send(JSON.stringify({ text: "Обновляем ваш баланс... ", balance: user.balance }))
-            }
-          })
-        }
-      })
+      await bets.getResultFromBets(ws, aWs)
+      // states.currentBet.forEach(cur => {
+      //   if (cur.name === ws.name) {
+      //     if (cur.money === 0) {
+      //       ws.send(JSON.stringify({ text: "Проигрыш", money: cur.money }))
+      //     }
+      //     else {
+      //       ws.send(JSON.stringify({ text: "Победа", money: cur.money }))
+      //     }
+      //     states.users.forEach(user => {
+      //       if (user.name === cur.name) {
+      //         ws.send(JSON.stringify({ text: "Обновляем ваш баланс... ", balance: user.balance }))
+      //       }
+      //     })
+      //   }
+      // })
       states.balance = false
     }
     if (states.refresh) {

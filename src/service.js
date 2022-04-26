@@ -1,11 +1,20 @@
+const e = require('cors');
 const { red } = require('./state')
+const states = require('./state')
 
 function getRandomInt(max) {
   return Math.floor(Math.random() * max);
 }
 
-function bid(bet, money, result) {
+function writeTheLastBet(obj) {
+  states.lastBets.push({
+    id: states.lastBets.length === 0 ? 1 : states.lastBets.length,
+    number: obj.number,
+    date: obj.date
+  })
+}
 
+function bid(bet, money, result, date) {
   let betMoney = money
 
   let resultBet = {
@@ -15,8 +24,8 @@ function bid(bet, money, result) {
   }
 
   if (result === 0) {
-    resultBet.even === null
-    resultBet.color === null
+    resultBet.even = null
+    resultBet.color = null
 
     if (result === bet) {
       money = money * 36
@@ -24,6 +33,7 @@ function bid(bet, money, result) {
       money = 0
     }
 
+    writeTheLastBet({ number: resultBet.number, date: states.date })
     return { bet, startMoney: betMoney, finalMoney: money, result: resultBet }
   }
 
@@ -31,6 +41,9 @@ function bid(bet, money, result) {
     let status = false
     switch (bet) {
       case "red":
+
+        // Исправить ошибку с выводом денег если выиграл!
+
         red.forEach(num => {
           if (num === result) {
             status = true
@@ -57,33 +70,26 @@ function bid(bet, money, result) {
     }
   }
 
-  if (bet >= 0 && bet <= 36) {
-    if (bet === result) {
-      money = money * 36
-    } else {
-      money = 0
-    }
-  }
+  bet >= 0 && bet <= 36 &&
+    bet === result
+    ? money = money * 36
+    : money = 0
 
   if (bet === "even" || bet === "odd") {
     switch (bet) {
       case "even":
-        if (result % 2 === 0) {
-          money = money * 2
-        } else {
-          money = 0
-        }
+        result % 2 === 0
+          ? money = money * 2
+          : money = 0
         break
       case "odd":
-        if (result % 2 === 1) {
-          money = money * 2
-        } else {
-          money = 0
-        }
+        result % 2 === 1
+          ? money = money * 2
+          : money = 0
         break
     }
   }
-
+  writeTheLastBet({ number: resultBet.number, date: states.date })
   return { bet, startMoney: betMoney, finalMoney: money, result: resultBet }
 }
 
