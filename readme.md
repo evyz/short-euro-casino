@@ -6,7 +6,7 @@
 Запуск: 
 
 ```
-git clone https://github.com/evyz/short-euro-casino.git casion
+git clone https://github.com/evyz/short-euro-casino.git casino
 cd casino
 npm i 
 npm run dev 

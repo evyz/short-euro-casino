@@ -4,8 +4,6 @@ const expressWs = require('express-ws')(app)
 const dayJs = require('dayjs')
 
 const { bid } = require('./src/service')
-const e = require('express')
-const { noData } = require('pg-protocol/dist/messages')
 
 const aWs = expressWs.getWss('/')
 
@@ -162,4 +160,4 @@ app.ws('/', (ws, req) => {
   console.log('Подключился')
 })
 
-app.listen(8080, () => console.log(`Server started on ${8080} port`))
+app.listen(9090, () => console.log(`Server started on ${9090} port`))
