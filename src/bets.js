@@ -11,7 +11,6 @@ class BetsService {
     let arr = await db('CurrentBets')
     arr.forEach(async row => {
       let resultBet = bid(row.bet, row.money, states.number)
-      console.log(resultBet)
       let user = await db('Users').where({ id: row.userId }).first()
       if (resultBet.finalMoney !== 0) {
         user.balance = user.balance + resultBet.finalMoney
@@ -26,7 +25,6 @@ class BetsService {
     let arr = await db('CurrentBets')
 
     arr.forEach(async row => {
-      console.log(row)
       if (row.money === 0) {
         ws.send(JSON.stringify({ text: "Проигрыш", money: row.money }))
       } else {

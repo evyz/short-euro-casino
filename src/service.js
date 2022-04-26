@@ -1,4 +1,3 @@
-const e = require('cors');
 const { red } = require('./state')
 const states = require('./state')
 
@@ -42,6 +41,8 @@ function bid(bet, money, result, date) {
     switch (bet) {
       case "red":
 
+        console.log('Вызов тут!')
+
         // Исправить ошибку с выводом денег если выиграл!
 
         red.forEach(num => {
@@ -70,22 +71,30 @@ function bid(bet, money, result, date) {
     }
   }
 
-  bet >= 0 && bet <= 36 &&
-    bet === result
-    ? money = money * 36
-    : money = 0
+  if (bet >= 0 && bet <= 36) {
+    if (bet === result) {
+      money = money * 36
+    } else {
+      money = 0
+    }
+  }
 
   if (bet === "even" || bet === "odd") {
     switch (bet) {
       case "even":
-        result % 2 === 0
-          ? money = money * 2
-          : money = 0
+        if (result % 2 === 0) {
+          money = money * 2
+        } else {
+          money = 0
+        }
         break
       case "odd":
-        result % 2 === 1
-          ? money = money * 2
-          : money = 0
+        if (result % 2 === 1) {
+          money = money * 2
+        }
+        else {
+          money = 0
+        }
         break
     }
   }
