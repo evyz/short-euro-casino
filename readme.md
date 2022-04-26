@@ -1,7 +1,6 @@
 # Тестовое задание
 
-- [https://docs.google.com/document/d/14AzrVneWFLknnNUerZUGeCNQRoMW6gfs0HMvNK5g5ug/edit#](Ссылка на задание)
-
+- [Ссылка на задание](https://docs.google.com/document/d/14AzrVneWFLknnNUerZUGeCNQRoMW6gfs0HMvNK5g5ug/edit#)
 
 Запуск: 
 
