@@ -13,26 +13,14 @@ class BetsService {
   async calculateBets() {
     let arr = await db('CurrentBets')
     arr.forEach(async row => {
-      console.log(row.userId)
-      let resultBet = await bid(row.bet, row.money, states.number)
       let user = await db('Users').where({ id: row.userId }).first()
-      console.log(resultBet)
+      let resultBet = await bid(row.bet, row.money, states.number, null, user.id)
+
       if (resultBet.finalMoney > 0) {
-        console.log("До расчёта", user.balance, resultBet.finalMoney)
         user.balance = user.balance + resultBet.finalMoney
-        console.log("После расчёта", user.balance)
-        try {
-          console.log(user.balance, row.userId)
-          await db('Users').update({ balance: user.balance }).where({ id: row.userId })
-        } catch (e) {
-          console.log("ОШИБКА", e)
-        }
+        await db('Users').update({ balance: user.balance }).where({ id: row.userId })
       } else {
-        try {
-          await db("CurrentBets").update({ money: 0 }).where({ userId: row.userId })
-        } catch (e) {
-          console.log("ОШИБКА!!!", e)
-        }
+        await db("CurrentBets").update({ money: 0 }).where({ userId: row.userId })
       }
     })
   }

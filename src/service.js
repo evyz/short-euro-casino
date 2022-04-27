@@ -1,16 +1,21 @@
 const { red } = require('./state')
 const states = require('./state')
 const db = require('./db/index')
+const dayJs = require('dayjs')
 
 function getRandomInt(max) {
   return Math.floor(Math.random() * max);
 }
 
-async function writeTheLastBet() {
-  return await db('Lasts').insert({ number: states.number, date: states.date })
+async function writeTheLastBet(obj) {
+  return await db('Lasts').insert({ number: states.number, date: dayJs(states.date).format('YYYY-MM-DDTHH:mm:ss') }).then(async () => {
+    let bet = await db("Lasts").where({ date: dayJs(states.date).format('YYYY-MM-DDTHH:mm:ss') }).first()
+    return await db('User_Bets').insert({ betsId: bet.id, userId: obj.userId, bet: obj.bet })
+  })
+
 }
 
-async function bid(bet, money, result, date) {
+async function bid(bet, money, result, date, userId) {
   let betMoney = money
 
   let resultBet = {
@@ -29,7 +34,7 @@ async function bid(bet, money, result, date) {
       money = 0
     }
 
-    await writeTheLastBet()
+    await writeTheLastBet({ bet, userId: userId })
     return { bet, startMoney: betMoney, finalMoney: money, result: resultBet }
   }
 
@@ -37,11 +42,6 @@ async function bid(bet, money, result, date) {
     let status = false
     switch (bet) {
       case "red":
-
-        console.log('Вызов тут!')
-
-        // Исправить ошибку с выводом денег если выиграл!
-
         red.forEach(num => {
           if (num === result) {
             status = true
@@ -95,7 +95,7 @@ async function bid(bet, money, result, date) {
         break
     }
   }
-  await writeTheLastBet()
+  await writeTheLastBet({ bet, userId })
   return { bet, startMoney: betMoney, finalMoney: money, result: resultBet }
 }
 

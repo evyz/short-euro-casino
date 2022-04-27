@@ -32,6 +32,15 @@ class UserService {
     return await db('Users').where({ name }).first()
   }
 
+  async myBets(req, res) {
+    return res.json(await db
+      .select("User_Bets.bet", "Lasts.date")
+      .from("Lasts")
+      .join("User_Bets", "Lasts.id", "=", "User_Bets.betsId")
+      .join("Users", "Users.id", "=", "User_Bets.userId")
+      .where({ "Users.name": req.body.name }))
+  }
+
 }
 
 module.exports = new UserService()
