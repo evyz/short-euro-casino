@@ -8,7 +8,6 @@ module.exports = {
   balance: false,
   refresh: false,
   isResult: false,
-
   date: dayJs(new Date()),
   check: dayJs(new Date()).diff(this.date),
   currentBet: [],
