@@ -14,7 +14,6 @@ class UserService {
         db('Users')
           .insert({ name, balance: 10000 })
           .then(async () => {
-            console.log(await db('Users').where({ name }).first())
             return await db('Users').where({ name }).first()
           })
     )

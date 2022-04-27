@@ -62,10 +62,5 @@ module.exports = {
           states.number = getRandomInt(36)
         }
 
-        if (states.check > 30000) {
-          states.date = dayJs(new Date())
-        }
-
-        console.log(states.check)
-      }, 30000)
+      }, 1000)
 }

@@ -1,19 +1,16 @@
 const { red } = require('./state')
 const states = require('./state')
+const db = require('./db/index')
 
 function getRandomInt(max) {
   return Math.floor(Math.random() * max);
 }
 
-function writeTheLastBet(obj) {
-  states.lastBets.push({
-    id: states.lastBets.length === 0 ? 1 : states.lastBets.length,
-    number: obj.number,
-    date: obj.date
-  })
+async function writeTheLastBet() {
+  return await db('Lasts').insert({ number: states.number, date: states.date })
 }
 
-function bid(bet, money, result, date) {
+async function bid(bet, money, result, date) {
   let betMoney = money
 
   let resultBet = {
@@ -32,7 +29,7 @@ function bid(bet, money, result, date) {
       money = 0
     }
 
-    writeTheLastBet({ number: resultBet.number, date: states.date })
+    await writeTheLastBet()
     return { bet, startMoney: betMoney, finalMoney: money, result: resultBet }
   }
 
@@ -98,7 +95,7 @@ function bid(bet, money, result, date) {
         break
     }
   }
-  writeTheLastBet({ number: resultBet.number, date: states.date })
+  await writeTheLastBet()
   return { bet, startMoney: betMoney, finalMoney: money, result: resultBet }
 }
 

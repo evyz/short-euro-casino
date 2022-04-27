@@ -10,13 +10,12 @@ module.exports = async (msg, ws, aWs, states) => {
         check = await db('CurrentBets').where({ userId: ws.id }).first()
         if (!check) {
           let user = await db('Users').where({ id: ws.id }).first()
-          if (user.money < data.money) {
+          if (user.balance < data.money) {
             ws.send("Ваш баланс меньше чем сумма, которую вы хотите поставить")
           }
           else {
             await db.transaction(async (trx) => {
               user.balance = user.balance - data.money
-
               await trx('Users').update({ balance: user.balance }).where({ id: user.id })
               await trx('CurrentBets').insert({ userId: user.id, money: data.money, bet: data.bet })
             }).then(() => {
