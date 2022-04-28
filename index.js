@@ -26,8 +26,8 @@ app.ws('/', async (ws, req) => {
   ws.name = name
   let wss = ws
   cycle.timerWs(wss, aWs)
-  setInterval(() => {
-    cycle.timerWs(wss, aWs)
+  setInterval(async () => {
+    await cycle.timerWs(wss, aWs)
   }, 20000)
   ws.on('message', (msg) => message(msg, wss, aWs, states))
 })
